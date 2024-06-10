@@ -30,7 +30,7 @@ def embed_verilog_modules (directory):
     embeddings = embed_model.encode(file_contents)
     return file_names, file_contents, embeddings
 
-file_names, file_contents, embeddings = embed_verilog_modules('C:\\Users\\Jasper Davidson\\Documents\\Programming\\LNIS\\RAG_implementation\\rag_grab')
+file_names, file_contents, embeddings = embed_verilog_modules('C:\\Users\\Jasper Davidson\\Documents\\Github\\RAG\\rag_grab')
 
 # Checks the dimension of each verilog module
 dimension = embeddings.shape[1]
@@ -41,7 +41,7 @@ index = faiss.IndexFlatL2(dimension)
 # Adds the verilog module embeddings to the vector space
 index.add(np.array(embeddings))
 
-def search_verilog_modules(index, query, k=5):
+def search_verilog_modules(index, query, k):
     query_embedding = embed_model.encode([query])
     distances, indices = index.search(np.array(query_embedding), k)
     results = []
@@ -54,18 +54,34 @@ def search_verilog_modules(index, query, k=5):
         
     return results
     
-description = "Design a microfluidic circuit that will mix two fluids together then incubate the output"
-retrieved_modules = search_verilog_modules(index, description)
+description = '''Mix 2 solutions together then incubate the output'''
 
 def build_prompt(query):
-    query = boilerplate + "\n\n" + query
-    relevant_modules = search_verilog_modules(index, query, k=2)
+    query = query
+    relevant_modules = search_verilog_modules(index, query, 2)
     
     module_contents = "";
     for module in relevant_modules:
-        module_contents += module['file_contents']
+        module_contents += module['file_contents'] + "\n\n"
+        
+    prompt = boilerplate
     
-    prompt = query + "\n\n" + module_contents
+    for module in relevant_modules:
+        prompt += f"Module: {module['file_name']}\n{module['file_contents']}\n\n"
+    
+    prompt += (
+        "Please generate the behavioral Verilog code for the \"experiment\" module using the provided "
+        "structural modules. Ensure that the generated code is well-organized and correctly integrates the provided modules. "
+        "The module should look like this:\n\n"
+        "module experiment(\n"
+        "    // Define your ports here\n"
+        ");\n"
+        "    // Integrate the provided modules here and write the necessary behavioral code\n"
+        "endmodule\n\n"
+        "Make sure the generated code is syntactically correct and follows the best practices of Verilog programming."
+    )
+    
+    print(prompt)
     
     return prompt
     
@@ -77,5 +93,3 @@ prompt = build_prompt(description)
 response = prompt_ai(prompt)
 
 print(response['response'])
-
-    

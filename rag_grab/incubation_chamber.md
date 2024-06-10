@@ -1,8 +1,7 @@
 module incubate (
     input soln1,
-    output out_fluid,
+    output out_fluid
 );
-
-out_fluid = soln1
+    assign out_fluid = soln1
 
 endmodule
