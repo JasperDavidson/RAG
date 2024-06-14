@@ -1,4 +1,4 @@
-module incubate (
+module incubate_25px_0 (
     input soln1,
     output out_fluid
 );

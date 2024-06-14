@@ -1,4 +1,4 @@
-module diffmix (
+module diffmix_25px_0 (
     input soln1,
     input soln2,
     output out_fluid

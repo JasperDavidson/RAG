@@ -2,14 +2,13 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import os
-import pandas as pd
 import ollama
 import warnings
 
 warnings.filterwarnings('ignore')
 
-embed_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-model = 'codellama'
+embed_model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+model = 'llama3'
 boilerplate = open('prompt.md', 'r').read()
 
 # Index and embed the verilog modules
@@ -30,7 +29,7 @@ def embed_verilog_modules (directory):
     embeddings = embed_model.encode(file_contents)
     return file_names, file_contents, embeddings
 
-file_names, file_contents, embeddings = embed_verilog_modules('C:\\Users\\Jasper Davidson\\Documents\\Github\\RAG\\rag_grab')
+file_names, file_contents, embeddings = embed_verilog_modules('/home/u1470577/test_ollama/RAG/rag_grab')
 
 # Checks the dimension of each verilog module
 dimension = embeddings.shape[1]
@@ -54,32 +53,21 @@ def search_verilog_modules(index, query, k):
         
     return results
     
-description = '''Mix 2 solutions together then incubate the output'''
+description = '''Use solution A and solution B to create a mixture that has a 1:2 ratio of solution A to solution B'''
 
 def build_prompt(query):
     query = query
     relevant_modules = search_verilog_modules(index, query, 2)
-    
-    module_contents = "";
-    for module in relevant_modules:
-        module_contents += module['file_contents'] + "\n\n"
         
-    prompt = boilerplate
+    prompt = boilerplate + "\n"
     
     for module in relevant_modules:
         prompt += f"Module: {module['file_name']}\n{module['file_contents']}\n\n"
+        
+    # prompt += "And here are some examples of correct/incorrect runs:\n"
+    # prompt += open('examples.md', 'r').read()
     
-    prompt += (
-        "Please generate the behavioral Verilog code for the \"experiment\" module using the provided "
-        "structural modules. Ensure that the generated code is well-organized and correctly integrates the provided modules. "
-        "The module should look like this:\n\n"
-        "module experiment(\n"
-        "    // Define your ports here\n"
-        ");\n"
-        "    // Integrate the provided modules here and write the necessary behavioral code\n"
-        "endmodule\n\n"
-        "Make sure the generated code is syntactically correct and follows the best practices of Verilog programming."
-    )
+    prompt += "And here is the lab you need to create (user prompt): " + query
     
     print(prompt)
     

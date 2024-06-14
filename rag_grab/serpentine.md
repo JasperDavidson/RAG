@@ -1,4 +1,4 @@
-module membrane_filter_25px_0 (
+module serpentine_25px_0 (
     input soln1,
     output out_fluid
 );
