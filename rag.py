@@ -4,8 +4,11 @@ import numpy as np
 import os
 import ollama
 import warnings
+import torch
 
 warnings.filterwarnings('ignore')
+
+os.environ["CUDA_VISIBLE_DEVICES"]=""
 
 embed_model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 model = 'llama3'
@@ -53,7 +56,7 @@ def search_verilog_modules(index, query, k):
         
     return results
     
-description = '''Use solution A and solution B to create a mixture that has a 1:2 ratio of solution A to solution B'''
+description = '''Take two solutions as input. Dilute the first solution, then mix with the other solution to create the output.'''
 
 def build_prompt(query):
     query = query
@@ -69,8 +72,6 @@ def build_prompt(query):
     
     prompt += "And here is the lab you need to create (user prompt): " + query
     
-    print(prompt)
-    
     return prompt
     
 def prompt_ai(prompt):
@@ -81,3 +82,6 @@ prompt = build_prompt(description)
 response = prompt_ai(prompt)
 
 print(response['response'])
+
+results = open('results.txt', 'a')
+results.write('\nModel: ' + model + '\nPrompt: ' + description + '\n' + response['response'] + '\n')
