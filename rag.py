@@ -11,7 +11,7 @@ warnings.filterwarnings('ignore')
 os.environ["CUDA_VISIBLE_DEVICES"]=""
 
 embed_model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
-model = 'llama3'
+model = 'codellama'
 boilerplate = open('prompt.md', 'r').read()
 
 # Index and embed the verilog modules
@@ -56,11 +56,11 @@ def search_verilog_modules(index, query, k):
         
     return results
     
-description = '''Take two solutions as input. Dilute the first solution, then mix with the other solution to create the output.'''
+description = '''Take 4 solutions as input. Mix the 4 solutions together sequentially to create the output'''
 
 def build_prompt(query):
     query = query
-    relevant_modules = search_verilog_modules(index, query, 2)
+    relevant_modules = search_verilog_modules(index, query, 1)
         
     prompt = boilerplate + "\n"
     
