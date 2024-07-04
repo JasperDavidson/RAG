@@ -93,4 +93,15 @@ Make sure you give your answer in a module called experiment and use correct ver
 
 Do not use any wires for simple solutions. If you are asked to mix two solutions together, do not use any wires.
 
-Do not use any assign statements or '+'. The word 'assign' and the symbol '+' should not appear anywhere in your program.
+If you are asked to take x number of wires as input, make sure you have x number of solutions defined for the module 'experiment'.
+
+Mixing in sequential order entails mixing two solutions together then storing the result in a wire. Then you would mix that wire with soln3 and place it in a new wire; keep going until finished. Mixing in parallel means to store all outputs in wires first, then mix the wires together.
+
+DO NOT USE any assign statements or '+'. The word 'assign' and the symbol '+' should not appear anywhere in your program.
+DO NOT USE ANY 'assign' STATEMENTS IN YOUR PROGRAM. THERE SHOULD BE NO 'assign output = wire', or anything similar, ANYWHERE IN YOUR CODE. ALSO, DO NOT CREATE ANY OF YOUR OWN MODULES. ONLY USE THE MODULES PROVIDED. If you use wires in your program, make sure you define them at the top of the experiment module. If you have three wires to mix in parallel, you will need two mixers not just one. You may even need to make another wire to store the results of other wires. You can not override what is stored in a wire (it can only be used to store one thing).
+
+If you have three wires, you'll need to mix all three together, not just two.
+
+Remember, I need *you* to code and give the experiment module to me.
+
+It's critical you use all wires that you create correctly. Do not create wires you do not later use, and check for this. You cannot use 'out_fluid' as a wire since it is the final output.
